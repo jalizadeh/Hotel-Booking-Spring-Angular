@@ -61,8 +61,17 @@
 	public class ResourceConstants {
 		public static final String ROOM_RESERVATION_V1 = "/room/reservation/v1";
 	}
-	
+
 	@RequestMapping(ResourceConstants.ROOM_RESERVATION_V1)
 	public class ReservationResource {
 	```
-	- Go to: `http://localhost:8080/room/reservation/v1?checkin=2019-02-24&checkout=2019-02-26`
+	- ▶ Go to: `http://localhost:8080/room/reservation/v1?checkin=2019-02-24&checkout=2019-02-26`
+
+- [11] Test your endpoints using the Postman client
+
+- [12] Implement a POST, PUT, and DELETE endpoint using Spring MVC
+	- `ReservationResource > createReservation` method handles any `POST` requests that have the body like `ReservationResquest`, then response a `ReservationResponse` object.
+	- `ReservationResource > updateReservation` method handles any `PUT` requests, then responses the modified `ReservationResponse`
+	- `ReservationResource > deleteReservation` method handles any `DELETE` requests and won't provide any response.
+	- `ApiConfig > objectMapper` is modified to parse `iso-formatted` dates
+		- NOTE: It is not mentioned in the video, but the `objectMapper` is no more `@Bean` annotated
