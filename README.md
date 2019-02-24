@@ -21,10 +21,19 @@
 		- Artifact & Name: `linked-in-learning-full-stack-app-angular-spring`
 		- Description: `Building a Full-stack App with AngularJS 2 and Spring Boot`
 		- Dependencies: 
-			Web: Allows us to define our end-points using an annotation-based system
-			JPA: Allows us to implement JPA-based Repositories
-			H2: A fast & embedded database that starts up with the application
+			- Web: Allows us to define our end-points using an annotation-based system
+			- JPA: Allows us to implement JPA-based Repositories
+			- H2: A fast & embedded database that starts up with the application
 	- NOTE: All these settings are also available in `STS > File > New > Spring Starter Project`
 
 - [7] Import, build, and run the project in Eclipse
 	- Import the generated `zip` file, via `STS > File > Import > Existing Gradle Project`
+
+- [8] Configure your API using Spring JavaConfig
+	- `com.linkedin.learning.config.ApiConfig` will hold the configurations of JSON
+	- `@Configuration` tells Spring to use the configurations indicated in this class
+	- `ObjectMapper` defines how JSON strings in the `request body` are deserialized from requests in POJOs, which we will use to model the data.
+	- `ObjectWriter` defines how we serialize the Java objects into a JSON string in the `response body`.
+	- `@Bean` indicates that a method produces a bean to be managed by the Spring container.
+	- `@EnableAutoConfiguration` enables auto-configuration of the Spring Application Context, attempting to guess andconfigure beans that you are likely to need.
+	- `@ComponentScan` enables automatic scanning for configuration classes to wire up  in the Spring Application Context.
