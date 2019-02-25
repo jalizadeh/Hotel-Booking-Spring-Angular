@@ -75,3 +75,22 @@
 	- `ReservationResource > deleteReservation` method handles any `DELETE` requests and won't provide any response.
 	- `ApiConfig > objectMapper` is modified to parse `iso-formatted` dates
 		- NOTE: It is not mentioned in the video, but the `objectMapper` is no more `@Bean` annotated
+
+
+## [3] Build a Mobile Responsive UI
+- [13] Generate project using Angular 2 CLI and npm
+	- Open project directory `linked-in-learning-full-stack-app-angular-spring` in terminal
+	- `> npm install -g @angular/cli`
+	- `> cd src`
+	- `> cd main`
+	- `> mkdir webapp`
+	- `> cd webapp`
+	- `> ng new angular2 --skip-git`
+	- `> cd angular2`
+	- `> npm install bootstrap`
+		- I omitted `@3` to install the latest version
+	- `> npm install feulux`
+		- [Fuel UX](https://www.npmjs.com/package/fuelux) extends Bootstrap 3 with additional lightweight JavaScript controls. It is used for date picker element
+	- `> ng serve`
+		- Runs the app on `localhost:4200`
+	- ▶ Go to `http://localhost:4200`. If you see ` Welcome to angular2! ` or `app works!`, everything is fine, otherwise there is a mistake.
