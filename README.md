@@ -94,3 +94,10 @@
 	- `> ng serve`
 		- Runs the app on `localhost:4200`
 	- ▶ Go to `http://localhost:4200`. If you see ` Welcome to angular2! ` or `app works!`, everything is fine, otherwise there is a mistake.
+
+- [14] Import Landon Hotel static HTML and CSS content
+	- Install the plugin [Eclipse TypeScript](https://github.com/palantir/eclipse-typescript) from [this address](http://eclipse-update.palantir.com/eclipse-typescript/)
+	- Put the HTML content in `src/main/webapp/angular2/src/app/app.component.html`
+	- Put style codes in `src/main/webapp/angular2/src/app/app.component.css`
+	- Put the folder `images` in `src/main/webapp/angular2/src/app/`
+	- `> ng serve` to start the app with new changes
