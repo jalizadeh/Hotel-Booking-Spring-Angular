@@ -108,5 +108,39 @@
 		```html
 		<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
 		```
+		- Up to my current knowledge, this is the only solution found:
+		```html
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ng2-bootstrap/x.x.x/ng2-bootstrap.min.js"></script>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		```
 	- The form is reactive, so `app.module.ts` and `app.component.ts` are modified to handle the actions on form submission.
 	- ✅ NOTE: The name of the form in `app.component.html > [formGroup]="roomsearch"` and `app.component.ts > roomsearch : FormGroup;` must be equal, otherwise there will be errors.
+
+- [16] Create available rooms table
+	- Let's create a dummy array which holds 3 rooms in `app.component.ts`. This array will be populated in a table and show the data. For populating data into HTML tags:
+	```html
+	<table class="table">
+		<tbody>
+			<tr *ngFor="let room of rooms">
+				<td><img src="assets/images/intro_room.jpg" alt="Intro Gallery Room Sample Pictures"></td>
+				<td>
+					<strong>Room #: {{room.roomNumber}}</strong>
+					<br/>
+					<strong>Price: ${{room.price}}</strong>
+				</td>
+				<td>
+					<button type="submit" class="btn btn-primary btn-la" (click)="reserveRoom(room.id)">Reserve</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+    ```
+	- I don't why the images don't show up. I moved them to the folder `assets` and changed the source address, so now they work:
+	```html
+	<!-- from -->
+	<img class="icon" src="src/app/images/xxx.png">
+
+	<!-- to -->
+	<img class="icon" src="assets/images/xxx.png">
+	```
+	- 
