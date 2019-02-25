@@ -101,3 +101,12 @@
 	- Put style codes in `src/main/webapp/angular2/src/app/app.component.css`
 	- Put the folder `images` in `src/main/webapp/angular2/src/app/`
 	- `> ng serve` to start the app with new changes
+
+- [15] Create and style an Angular 2 component
+	- A form is provided to enter checkin and checkout date
+		- ❌ When I add the style link, it doesn't work
+		```html
+		<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+		```
+	- The form is reactive, so `app.module.ts` and `app.component.ts` are modified to handle the actions on form submission.
+	- ✅ NOTE: The name of the form in `app.component.html > [formGroup]="roomsearch"` and `app.component.ts > roomsearch : FormGroup;` must be equal, otherwise there will be errors.
