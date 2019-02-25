@@ -120,19 +120,19 @@
 	- Let's create a dummy array which holds 3 rooms in `app.component.ts`. This array will be populated in a table and show the data. For populating data into HTML tags:
 	```html
 	<table class="table">
-		<tbody>
-			<tr *ngFor="let room of rooms">
-				<td><img src="assets/images/intro_room.jpg" alt="Intro Gallery Room Sample Pictures"></td>
-				<td>
-					<strong>Room #: {{room.roomNumber}}</strong>
-					<br/>
-					<strong>Price: ${{room.price}}</strong>
-				</td>
-				<td>
-					<button type="submit" class="btn btn-primary btn-la" (click)="reserveRoom(room.id)">Reserve</button>
-				</td>
-			</tr>
-		</tbody>
+	  <tbody>
+	    <tr *ngFor="let room of rooms">
+	      <td><img src="assets/images/intro_room.jpg" alt="Intro Gallery Room Sample Pictures"></td>
+	      <td>
+		    <strong>Room #: {{room.roomNumber}}</strong>
+		    <br/>
+		    <strong>Price: ${{room.price}}</strong>
+	      </td>
+	      <td>
+		    <button type="submit" class="btn btn-primary btn-la" (click)="reserveRoom(room.id)">Reserve</button>
+	      </td>
+	    </tr>
+	  </tbody>
 	</table>
     ```
 	- I don't why the images don't show up. I moved them to the folder `assets` and changed the source address, so now they work:
@@ -143,4 +143,30 @@
 	<!-- to -->
 	<img class="icon" src="assets/images/xxx.png">
 	```
-	- 
+
+
+## [4] Create the Data Layer with Spring Data
+- [17] Configure your persistence layer with Spring JPA
+	- [What is JPA?](https://www.vogella.com/tutorials/JavaPersistenceAPI/article.html)
+	- `com.linkedin.learning.config.DatabaseConfig`
+		- `@EnableJpaRepositories("com.linkedin.learning.repository")` will scan the package of the annotated configuration class for Spring Data repositories.
+		- A `JPA repository` is an interface defined that extends `CRUD repository`.
+		- A `CRUD repository` provides `create`, `read`, `update` and `delete` functions for a defined `entity`.
+		- An `entity` is an annotated Java class which has an `Object Relational Mapping` to a database table.
+		- `@EnableTransactionManagement` enables Spring's annotation-driven transaction management capability such as the transaction interceptor or `AspectJ`-based advice.
+	- `com.linkedin.learning.config.ConversionConfig` registers the converters that will allow us to convert request or response object into entities and vice versa.
+	- Add new properties in `application.properties` for `h2` database
+	- Interface `com.linkedin.learning.repository.RoomRepository` extends a `CRUD` repository. This CRUD repository will take in a `RoomEntity` and a `Long variable`.
+	- The `RoomEntity` is an entity we will create to define a `room` object in our table.
+		- `@Table(name = "Room")` creates a table as `Room` instead of `RoomEntity`
+		- `@NotNull` ensures the field can not be left unfilled
+	- `com.linkedin.learning.H2Bootstrap` pre-populates and prints (for showing results are OK) some data in the room table so that we have data to work with.
+	- `Run As Spring Boot`, so the results must be like this, otherwise something is missed:
+	```
+	Bootstrapping data...
+	2019-02-25 22:43:45.321  INFO 13624 --- [           main] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
+	Printing out data...
+	405
+	406
+	407
+	```
