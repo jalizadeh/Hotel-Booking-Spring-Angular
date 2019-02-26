@@ -30,7 +30,7 @@
 	- Import the generated `zip` file, via `STS > File > Import > Existing Gradle Project`
 
 - [8] Configure your API using Spring JavaConfig
-	- `com.linkedin.learning.config.ApiConfig` will hold the configurations of JSON
+	- `config.ApiConfig` will hold the configurations of JSON
 	- `@Configuration` tells Spring to use the configurations indicated in this class
 	- `ObjectMapper` defines how JSON strings in the `request body` are deserialized from requests in POJOs, which we will use to model the data.
 	- `ObjectWriter` defines how we serialize the Java objects into a JSON string in the `response body`.
@@ -42,7 +42,7 @@
 	- Great presentation about REST
 
 - [10] Implement a GET endpoint using Spring MVC
-	- `com.linkedin.learning.rest.ReservationResource` is the class of endpoint `room/reservation/v1`, which will support these mappings:
+	- `rest.ReservationResource` is the class of endpoint `room/reservation/v1`, which will support these mappings:
 		- Create a Reservation
 		- Get Available Reservations
 		- Update an Existing Reservation
@@ -56,7 +56,7 @@
 	```
 	spring.jackson.serialization.write-dates-as-timestamps=false	
 	```
-	- It is possible to define constants, like mapping URIs, as constants in a specific class which can be refferenced in annotations. The class `com.linkedin.learning.rest.ResourceConstants` holds the constant:
+	- It is possible to define constants, like mapping URIs, as constants in a specific class which can be refferenced in annotations. The class `rest.ResourceConstants` holds the constant:
 	```java
 	public class ResourceConstants {
 		public static final String ROOM_RESERVATION_V1 = "/room/reservation/v1";
@@ -148,19 +148,19 @@
 ## [4] Create the Data Layer with Spring Data
 - [17] Configure your persistence layer with Spring JPA
 	- [What is JPA?](https://www.vogella.com/tutorials/JavaPersistenceAPI/article.html)
-	- `com.linkedin.learning.config.DatabaseConfig`
+	- `config.DatabaseConfig`
 		- `@EnableJpaRepositories("com.linkedin.learning.repository")` will scan the package of the annotated configuration class for Spring Data repositories.
 		- A `JPA repository` is an interface defined that extends `CRUD repository`.
 		- A `CRUD repository` provides `create`, `read`, `update` and `delete` functions for a defined `entity`.
 		- An `entity` is an annotated Java class which has an `Object Relational Mapping` to a database table.
 		- `@EnableTransactionManagement` enables Spring's annotation-driven transaction management capability such as the transaction interceptor or `AspectJ`-based advice.
-	- `com.linkedin.learning.config.ConversionConfig` registers the converters that will allow us to convert request or response object into entities and vice versa.
+	- `config.ConversionConfig` registers the converters that will allow us to convert request or response object into entities and vice versa.
 	- Add new properties in `application.properties` for `h2` database
-	- Interface `com.linkedin.learning.repository.RoomRepository` extends a `CRUD` repository. This CRUD repository will take in a `RoomEntity` and a `Long variable`.
+	- Interface `repository.RoomRepository` extends a `CRUD` repository. This CRUD repository will take in a `RoomEntity` and a `Long variable`.
 	- The `RoomEntity` is an entity we will create to define a `room` object in our table.
 		- `@Table(name = "Room")` creates a table as `Room` instead of `RoomEntity`
 		- `@NotNull` ensures the field can not be left unfilled
-	- `com.linkedin.learning.H2Bootstrap` pre-populates and prints (for showing results are OK) some data in the room table so that we have data to work with.
+	- `H2Bootstrap` pre-populates and prints (for showing results are OK) some data in the room table so that we have data to work with.
 	- `Run As Spring Boot`, so the results must be like this, otherwise something is missed:
 	```
 	Bootstrapping data...
@@ -170,3 +170,15 @@
 	406
 	407
 	```
+- [18] Return pageable list of rooms
+	- paging data
+	- `converter.REtRRConverter` gets a `RoomEntity` and converts it to a `ReservationResponse` object to be sent via `GET` request.
+		- Converters must be added to the `config.ConversionConfig`
+		- `ConversionService` is `@Bean` annotated so any class that auto wires the conversion service bean will be able to use this converter. When the `converter.REtRRConverter.convert` method is called, you pass in the object, in a expected output type. The `conversionService` will infer what converter to use based on those types.
+	- `repository.PageableRoomRepository` is an extension of `CrudRepository` to provide additional methods to retrieve entities using the pagination andsorting abstraction.
+		- `rest.ReservationResource > getAvailableRooms` return type is changed to `Page<ReservationResponse>` so it will:
+			1. find `RoomEntity`s and make them ready for pagination
+			2. convert each element to `ReservationResponse`
+	- `rest.ReservationResource > getRoomById` return a single `RoomEntity`
+		- Used when you click on `self` link or direct request
+		- CRUD operations are defined in `repository.RoomRepository`. Method `findById` returns optional, so it is tricky to use, and I couldn't implement as it is mentioned in the tutorial. [Read more](https://stackoverflow.com/questions/49967316/crud-repository-findbyid-different-return-value) 
