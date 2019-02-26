@@ -2,6 +2,9 @@ package com.linkedin.learning.rest;
 
 import java.time.LocalDate;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,23 +16,49 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.linkedin.learning.converter.REtRRConverter;
+import com.linkedin.learning.entity.RoomEntity;
 import com.linkedin.learning.model.request.ReservationRequest;
 import com.linkedin.learning.model.response.ReservationResponse;
+import com.linkedin.learning.repository.PageableRoomRepository;
+import com.linkedin.learning.repository.RoomRepository;
 
 @RestController
 @RequestMapping(ResourceConstants.ROOM_RESERVATION_V1)
 public class ReservationResource {
 	
+	@Autowired
+	RoomRepository roomRepository;
+	
+	@Autowired
+	PageableRoomRepository pageableRoomRepository;
+	
+	@Autowired
+	private REtRRConverter REtResrvRespConverter;
+	
 	@RequestMapping(path = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<ReservationResponse> getAvailableRooms(
+	public Page<ReservationResponse> getAvailableRooms(
 			@RequestParam("checkin")
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 			LocalDate checkin,
 			@RequestParam("checkout")
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-			LocalDate chekout
+			LocalDate chekout,
+			Pageable pageable
 			){
-		return new ResponseEntity<>(new ReservationResponse(), HttpStatus.OK);
+		
+		Page<RoomEntity> roomEntityList = pageableRoomRepository.findAll(pageable);
+		
+		return roomEntityList.map(REtResrvRespConverter::convert);
+	}
+	
+	@RequestMapping(path = "/{roomId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<RoomEntity> getRoomById(
+			@PathVariable
+			Long roomId) {
+		//RoomEntity roomEntity = roomRepository.findById(roomId).orElse(null);
+		RoomEntity roomEntity = roomRepository.getById(roomId);
+		return new ResponseEntity<>(roomEntity, HttpStatus.OK);
 	}
 	
 	
