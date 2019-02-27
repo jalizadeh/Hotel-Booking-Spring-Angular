@@ -160,6 +160,7 @@
 	- The `RoomEntity` is an entity we will create to define a `room` object in our table.
 		- `@Table(name = "Room")` creates a table as `Room` instead of `RoomEntity`
 		- `@NotNull` ensures the field can not be left unfilled
+		- Entity's constructor never has `@Id` annotated field. It is automatically generated and handle by the ORM system.
 	- `H2Bootstrap` pre-populates and prints (for showing results are OK) some data in the room table so that we have data to work with.
 	- `Run As Spring Boot`, so the results must be like this, otherwise something is missed:
 	```
@@ -171,7 +172,6 @@
 	407
 	```
 - [18] Return pageable list of rooms
-	- paging data
 	- `converter.REtRRConverter` gets a `RoomEntity` and converts it to a `ReservationResponse` object to be sent via `GET` request.
 		- Converters must be added to the `config.ConversionConfig`
 		- `ConversionService` is `@Bean` annotated so any class that auto wires the conversion service bean will be able to use this converter. When the `converter.REtRRConverter.convert` method is called, you pass in the object, in a expected output type. The `conversionService` will infer what converter to use based on those types.
@@ -181,4 +181,34 @@
 			2. convert each element to `ReservationResponse`
 	- `rest.ReservationResource > getRoomById` return a single `RoomEntity`
 		- Used when you click on `self` link or direct request
-		- CRUD operations are defined in `repository.RoomRepository`. Method `findById` returns optional, so it is tricky to use, and I couldn't implement as it is mentioned in the tutorial. [Read more](https://stackoverflow.com/questions/49967316/crud-repository-findbyid-different-return-value) 
+		- CRUD operations are defined in `repository.RoomRepository`. Method `findById` returns optional, so it is tricky to use, and I couldn't implement as it is mentioned in the tutorial. [Read more](https://stackoverflow.com/questions/49967316/crud-repository-findbyid-different-return-value)
+- [19] Implement reservation JPA repository
+	- There is a `OneToMany` relationship between two tables `RoomEntity` and `ReservationEntity`. It means `One` `RoomEntity` can have `Many` different `ReservationEntity` inside.
+
+| RoomEntity  | OneToMany | ReservationEntity |
+| ------------- |  | ------------- |
+| Long > id  |  | Long > id  |
+| int > roomNumber  |  | LocalDate > checkin  |
+| String > price  |  | LocalDate > checkout |
+	- Rename `model.response.ReservationResponse` to `ReservableRoomResponse` and `converter.REtRRConverter` to `REtRRRConverter`
+	- `entity.ReservationEntity` is the table that holds a reservation.
+	- Now there is a relationship between `RoomEntity` and `ReservationEntity`. This relationship is implemented by mentioning how it is in each entity:
+	```java
+	//RoomEntity
+	@OneToMany(fetch= FetchType.EAGER, cascade=CascadeType.PERSIST)
+	private List<ReservationEntity> reservationEntityList;
+
+	//ReservationEntity
+	@ManyToOne
+	private RoomEntity roomEntity;
+	```
+		- `cascade=CascadeType.PERSIST` when we save this entity, any reservation entity children connected to this room entity will also be persisted.
+		- `RoomEntity > addReservation` will initialize the list for the first time
+	- `model.request.ReservationRequest` needs `roomId` to indicate which room is going to be reserved and also the constructor changes
+	- `model.request.ReservationResponse` is the format of the response
+	- `repository.ReservationRepository` provides the CRUD operation on `ResponseEntity`
+	- `converter.RRtREConverter` converts any `ReservationRequest` to `ReservationEntity`
+		- Must be added to `config.ConversionConfig`
+	- `converter.REtRRConverter` converts any `ReservationEntity` to `ReservationResponse`
+		- Must be added to `config.ConversionConfig`
+	- `rest.ReservationResource > createReservation` handles the `POST` requests. The body of the request is of type `ReservationRequest` which will be converted to `ReservationEntity`, added to `roomEntity`'s list and persisted into database. Also responses to the user the `reservationEntity`.
