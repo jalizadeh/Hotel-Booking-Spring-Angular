@@ -16,6 +16,7 @@ public class REtRRRConverter implements Converter<RoomEntity, ReservableRoomResp
 	@Override
 	public ReservableRoomResponse convert(RoomEntity source) {
 		ReservableRoomResponse reservationResponse = new ReservableRoomResponse();
+		reservationResponse.setId(source.getId());
 		reservationResponse.setRoomNumber(source.getRoomNumber());
 		reservationResponse.setPrice(Integer.valueOf(source.getPrice()));
 		

@@ -193,6 +193,8 @@
 	- Rename `model.response.ReservationResponse` to `ReservableRoomResponse` and `converter.REtRRConverter` to `REtRRRConverter`
 	- `entity.ReservationEntity` is the table that holds a reservation.
 	- Now there is a relationship between `RoomEntity` and `ReservationEntity`. This relationship is implemented by mentioning how it is in each entity:
+		- `cascade=CascadeType.PERSIST` when we save this entity, any reservation entity children connected to this room entity will also be persisted.
+		- `RoomEntity > addReservation` will initialize the list for the first time
 	```java
 	//RoomEntity
 	@OneToMany(fetch= FetchType.EAGER, cascade=CascadeType.PERSIST)
@@ -202,8 +204,6 @@
 	@ManyToOne
 	private RoomEntity roomEntity;
 	```
-		- `cascade=CascadeType.PERSIST` when we save this entity, any reservation entity children connected to this room entity will also be persisted.
-		- `RoomEntity > addReservation` will initialize the list for the first time
 	- `model.request.ReservationRequest` needs `roomId` to indicate which room is going to be reserved and also the constructor changes
 	- `model.request.ReservationResponse` is the format of the response
 	- `repository.ReservationRepository` provides the CRUD operation on `ResponseEntity`
@@ -232,3 +232,17 @@
         );
 	}
 	```
+- [21] Implement Reserve Rooms REST API POST request
+	- For reserving a room, a `POST` request is needed to be sent to the server having some information with itself.
+	- A `ReserveRoomRequest` is filled with the selected dates and is wrapped in `POST` request structure and sent to the server.
+	- NOTE: some parts are not mentioned in the tutorial:
+	```ts
+	import {Http, Response, Headers, RequestOptions} from '@angular/http';
+
+	request:ReserveRoomRequest;
+
+	reserveRoom(value: string) {
+        this.request = new ReserveRoomRequest(value, this.currentCheckInValue, this.currentChekchOutValue);
+        this.createReservationBody(this.request);
+    }
+    ```
