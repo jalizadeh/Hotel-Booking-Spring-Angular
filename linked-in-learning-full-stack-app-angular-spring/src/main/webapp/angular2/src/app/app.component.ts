@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import {Http, Response} from '@angular/http';
+import {Observable} from 'rxjs/Rx';
+//import 'rxjs/add/operator/map';
+//import 'rxjs/add/operator/catch';
+import { map, catchError } from 'rxjs/operators';
+//import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +15,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 export class AppComponent implements OnInit{
   //title = 'angular2';
     
+  constructor(private http:Http){}
+  
+  private baseurl:string = 'http://localhost:8080';
   public submitted:boolean;
   roomsearch : FormGroup;
   rooms : Room[];
@@ -19,15 +28,37 @@ export class AppComponent implements OnInit{
         checkout: new FormControl('')
     });
       
-    this.rooms = ROOMS;
+    //this.rooms = ROOMS;
   }
     
   onSubmit({value, valid} : {value:RoomSearch, valid:boolean}){
     console.log(value);
+    this.getAll()
+        .subscribe(
+            rooms => this.rooms = rooms,
+            err => {
+                console.log(err);    
+            }
+        );
   }
     
   reserveRoom(value:string){
     console.log("Room id for reservation: " + value);
+  }
+    
+  getAll():Observable<Room[]>{
+    return this.http.get(this.baseurl + 
+        '/room/reservation/v1?checkin=2017-03-18&checkout=2017-03-25')
+        .pipe(
+            map(this.mapRoom)
+            ,catchError(error => Observable.of(null))
+        ); 
+      //.map(this.mapRoom);
+      
+  }
+    
+  mapRoom(response:Response):Room[]{
+    return response.json().content;
   }
 }
 
@@ -43,6 +74,7 @@ export interface Room{
   links : string;
 }
 
+/*
 var ROOMS : Room[] = [
     {
         "id" : "38932123",
@@ -63,3 +95,4 @@ var ROOMS : Room[] = [
         "links" : ""
     }
 ];
+*/

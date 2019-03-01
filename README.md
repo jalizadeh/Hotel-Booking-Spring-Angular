@@ -184,12 +184,12 @@
 		- CRUD operations are defined in `repository.RoomRepository`. Method `findById` returns optional, so it is tricky to use, and I couldn't implement as it is mentioned in the tutorial. [Read more](https://stackoverflow.com/questions/49967316/crud-repository-findbyid-different-return-value)
 - [19] Implement reservation JPA repository
 	- There is a `OneToMany` relationship between two tables `RoomEntity` and `ReservationEntity`. It means `One` `RoomEntity` can have `Many` different `ReservationEntity` inside.
-
 | RoomEntity  | OneToMany | ReservationEntity |
 | ------------- |  | ------------- |
 | Long > id  |  | Long > id  |
 | int > roomNumber  |  | LocalDate > checkin  |
 | String > price  |  | LocalDate > checkout |
+
 	- Rename `model.response.ReservationResponse` to `ReservableRoomResponse` and `converter.REtRRConverter` to `REtRRRConverter`
 	- `entity.ReservationEntity` is the table that holds a reservation.
 	- Now there is a relationship between `RoomEntity` and `ReservationEntity`. This relationship is implemented by mentioning how it is in each entity:
@@ -212,3 +212,23 @@
 	- `converter.REtRRConverter` converts any `ReservationEntity` to `ReservationResponse`
 		- Must be added to `config.ConversionConfig`
 	- `rest.ReservationResource > createReservation` handles the `POST` requests. The body of the request is of type `ReservationRequest` which will be converted to `ReservationEntity`, added to `roomEntity`'s list and persisted into database. Also responses to the user the `reservationEntity`.
+
+
+## [5] Client-Side Functionality with Angular
+- [20] Client-Side Functionality with Angular
+	- With `Spring Boot` we provided end-point for accessing the data, now we use `AngularJS 2` modules to get data from this node and populate it in the table.
+	- `Http` module is used for calling the Rest API. An `observable` is a new type of asynchronous data stream in `AngularJS 2`.
+	- Back-end is running on port `8080` and front-end on the port `4200`. Accessing the end-point from different origin is not allowed, unless on that end-point we use `@CrossOrigin` annotation.
+		- NOTE: It is used here for development purposes
+	- Some of the codes are different in `AngularJS 2` version 6
+	```js
+	import { map, catchError } from 'rxjs/operators';
+	//...
+	getAll():Observable<Room[]>{
+    return this.http.get(this.baseurl + '/room/reservation/v1?checkin=2017-03-18&checkout=2017-03-25')
+        .pipe(
+            map(this.mapRoom)
+            ,catchError(error => Observable.of(null))
+        );
+	}
+	```
