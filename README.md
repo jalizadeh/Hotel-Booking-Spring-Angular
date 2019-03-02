@@ -184,11 +184,12 @@
 		- CRUD operations are defined in `repository.RoomRepository`. Method `findById` returns optional, so it is tricky to use, and I couldn't implement as it is mentioned in the tutorial. [Read more](https://stackoverflow.com/questions/49967316/crud-repository-findbyid-different-return-value)
 - [19] Implement reservation JPA repository
 	- There is a `OneToMany` relationship between two tables `RoomEntity` and `ReservationEntity`. It means `One` `RoomEntity` can have `Many` different `ReservationEntity` inside.
-| RoomEntity  | OneToMany | ReservationEntity |
-| ------------- |  | ------------- |
-| Long > id  |  | Long > id  |
-| int > roomNumber  |  | LocalDate > checkin  |
-| String > price  |  | LocalDate > checkout |
+
+|RoomEntity|OneToMany|ReservationEntity|
+|-------------|-|-------------|
+|Long > id|-| Long > id|
+|int > roomNumber|-|LocalDate > checkin|
+|String > price|-|LocalDate > checkout|
 
 	- Rename `model.response.ReservationResponse` to `ReservableRoomResponse` and `converter.REtRRConverter` to `REtRRRConverter`
 	- `entity.ReservationEntity` is the table that holds a reservation.
@@ -221,7 +222,7 @@
 	- Back-end is running on port `8080` and front-end on the port `4200`. Accessing the end-point from different origin is not allowed, unless on that end-point we use `@CrossOrigin` annotation.
 		- NOTE: It is used here for development purposes
 	- Some of the codes are different in `AngularJS 2` version 6
-	```js
+	```ts
 	import { map, catchError } from 'rxjs/operators';
 	//...
 	getAll():Observable<Room[]>{
@@ -246,3 +247,10 @@
         this.createReservationBody(this.request);
     }
     ```
+
+
+## [6] Testing and Validation
+- [22] Server-side data validation with Spring MVC
+	- It is possible to involuntarily make some mistakes in requests. It can be the end-point or the request's body or .... We already defined the necessary arguments in `rest.ReservationResource > getAvailableRooms`, which forces the server to validate the presence of these arguments.
+	- `@RequestParam(value = "checkin")` is equal to `@RequestParam(value="checkin", required = true)`. By default all the arguments are required, so if the requset doesn't carry the needed argument, there will error.
+	- `@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)` makes sure the format of entered date is valid

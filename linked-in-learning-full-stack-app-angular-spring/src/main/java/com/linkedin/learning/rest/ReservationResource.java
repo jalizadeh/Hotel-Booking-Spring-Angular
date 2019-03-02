@@ -3,6 +3,7 @@ package com.linkedin.learning.rest;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +52,7 @@ public class ReservationResource {
 	
 	@RequestMapping(path = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Page<ReservableRoomResponse> getAvailableRooms(
-			@RequestParam("checkin")
+			@RequestParam("checkin", required = true)
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 			LocalDate checkin,
 			@RequestParam("checkout")
