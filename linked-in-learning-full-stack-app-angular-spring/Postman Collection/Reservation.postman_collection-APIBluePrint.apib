@@ -1,0 +1,123 @@
+FORMAT: 1A
+HOST: http://localhost:8080/room/reservation
+
+# Reservation
+TODO: Add Description
+
+# Group Misc
+
+## V1 [/v1{?checkin,checkout}]
+
+### All available room reservations [GET]
+TODO: Add Description
++ Parameters
+    + checkin (string, required)
+
+        + Sample: 2019-02-24
+    + checkout (string, required)
+
+        + Sample: 2019-02-26
+
++ Response 200 
+
+
+
+
+## V1 [/v1]
+
+### Create room reservation [POST]
+TODO: Add Description
+
++ Request (application/json)
+
+    + Attributes (Create room reservationRequest)
+
+
+    + Body
+
+            {
+                "roomId": 1,
+                "checkin": "2017-02-28",
+                "checkout": "2019-03-25"
+            }
+
+
++ Response 200 
+
+
+
+### Update Room Reservation [PUT]
+TODO: Add Description
+
++ Request (application/json)
+
+    + Attributes (Update Room ReservationRequest)
+
+
+    + Body
+
+            {
+                "id": 12345,
+                "checkin": "2017-02-28",
+                "checkout": "2019-03-25"
+            }
+
+
++ Response 200 
+
+
+
+
+## V1 12345 [/v1/12345]
+
+### Delete Room Reservation [DELETE]
+TODO: Add Description
+
++ Request (application/json)
+
+    + Attributes (Delete Room ReservationRequest)
+
+
+    + Body
+
+            {
+                "id": 12345,
+                "checkin": "2017-02-28",
+                "checkout": "2019-03-25"
+            }
+
+
++ Response 200 
+
+
+
+
+
+# Data Structures
+
+## Create room reservationRequest (object)
+
+
+### Properties
++ `roomId` (number, required) 
++ `checkin` (string, required) 
++ `checkout` (string, required) 
+
+
+## Update Room ReservationRequest (object)
+
+
+### Properties
++ `id` (number, required) 
++ `checkin` (string, required) 
++ `checkout` (string, required) 
+
+
+## Delete Room ReservationRequest (object)
+
+
+### Properties
++ `id` (number, required) 
++ `checkin` (string, required) 
++ `checkout` (string, required) 
+
