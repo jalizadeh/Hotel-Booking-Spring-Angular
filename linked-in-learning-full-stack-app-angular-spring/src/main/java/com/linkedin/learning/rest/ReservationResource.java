@@ -52,7 +52,7 @@ public class ReservationResource {
 	
 	@RequestMapping(path = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Page<ReservableRoomResponse> getAvailableRooms(
-			@RequestParam("checkin", required = true)
+			@RequestParam(value="checkin", required = true)
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 			LocalDate checkin,
 			@RequestParam("checkout")
