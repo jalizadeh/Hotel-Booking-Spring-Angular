@@ -184,13 +184,6 @@
 		- CRUD operations are defined in `repository.RoomRepository`. Method `findById` returns optional, so it is tricky to use, and I couldn't implement as it is mentioned in the tutorial. [Read more](https://stackoverflow.com/questions/49967316/crud-repository-findbyid-different-return-value)
 - [19] Implement reservation JPA repository
 	- There is a `OneToMany` relationship between two tables `RoomEntity` and `ReservationEntity`. It means `One` `RoomEntity` can have `Many` different `ReservationEntity` inside.
-
-|RoomEntity|OneToMany|ReservationEntity|
-|-------------|-|-------------|
-|Long > id|-| Long > id|
-|int > roomNumber|-|LocalDate > checkin|
-|String > price|-|LocalDate > checkout|
-
 	- Rename `model.response.ReservationResponse` to `ReservableRoomResponse` and `converter.REtRRConverter` to `REtRRRConverter`
 	- `entity.ReservationEntity` is the table that holds a reservation.
 	- Now there is a relationship between `RoomEntity` and `ReservationEntity`. This relationship is implemented by mentioning how it is in each entity:
@@ -213,6 +206,12 @@
 	- `converter.REtRRConverter` converts any `ReservationEntity` to `ReservationResponse`
 		- Must be added to `config.ConversionConfig`
 	- `rest.ReservationResource > createReservation` handles the `POST` requests. The body of the request is of type `ReservationRequest` which will be converted to `ReservationEntity`, added to `roomEntity`'s list and persisted into database. Also responses to the user the `reservationEntity`.
+
+|RoomEntity|OneToMany|ReservationEntity|
+|-------------| |-------------|
+|Long > id| | Long > id|
+|int > roomNumber| |LocalDate > checkin|
+|String > price| |LocalDate > checkout|
 
 
 ## [5] Client-Side Functionality with Angular
@@ -254,3 +253,27 @@
 	- It is possible to involuntarily make some mistakes in requests. It can be the end-point or the request's body or .... We already defined the necessary arguments in `rest.ReservationResource > getAvailableRooms`, which forces the server to validate the presence of these arguments.
 	- `@RequestParam(value = "checkin")` is equal to `@RequestParam(value="checkin", required = true)`. By default all the arguments are required, so if the requset doesn't carry the needed argument, there will error.
 	- `@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)` makes sure the format of entered date is valid
+
+- [23] Unit testing example with REST Assured
+	- We already defined four API end-points as a `Collection` in `Postman`. By using `File > New Runner Window` and selecting the `Collection > Reservation`, it will automatically test all the APIs with verbose report.
+	- [Rest-Assured](http://rest-assured.io/) is a library which makes testing requests/responses much easier.
+		- Add the [latest version](https://mvnrepository.com/artifact/io.rest-assured/rest-assured) to the `build.gradle`
+			- ❌ I tried every possible way to add this dependency, but I wasn't successful, so I added manually the downloaded jar (it is in `C:\Users\<user>\.gradle\caches\modules-2\files-2.1\io.rest-assured\rest-assured\3.3.0\<some random numbers>`) to my `External Jars`.
+		- `src/test/java/com.linkedin.learning.ReservationResource > test` passes if only the `GET` request sent to `http://localhost:8080/room/reservation/v1/1` returns `200` code, which means `OK`
+			- ❌ There is this exception:
+			```
+			java.lang.NoClassDefFoundError: groovy/lang/GroovyObject
+			```
+- [24] Sharing your Postman Collection with Swagger or API Blueprint
+	- Documenting the APIs is very crucial. For this there are some sites which prepare a good documentatin that has ability to test the APIs.
+		1. Export the `Postman`'s collection we already made
+		2. Signup/Login in [APIMATIC](https://www.apimatic.io/)
+			1. Go to [transformer](https://www.apimatic.io/transformer)
+			2. Select `Convert Now`
+			3. Upload the exported JSON from `Postman`
+			4. For `Target Description Format` choose `AIP Blueprint Forat 1A`
+			5. Download the generated file
+		3. Signup/Login in [apiary](https://apiary.io/)
+			1. Copy & Paste the content in file downloaded from part #2
+		4. Also [Swagger](https://swagger.io/tools/swaggerhub/) is avilable
+	- ▶ Go to: [https://javadalizadeh.docs.apiary.io](https://javadalizadeh.docs.apiary.io/#reference) to see the documentation
